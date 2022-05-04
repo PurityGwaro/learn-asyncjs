@@ -63,40 +63,144 @@ an endpoint are urls that a particular API or server exposes to us so that we ca
 
 
 
-const getTodos = (callback)=>{
-    //create a request object
+
+//const getTodos = (resource, callback)=>{
+//    //create a request object
+//    const request = new XMLHttpRequest();
+//
+//    request.addEventListener('readystatechange', () =>{
+//
+//        if(request.readyState === 4 && request.status === 200){
+//            callback(undefined, request.responseText);
+//
+//        }else if(request.readyState === 4){
+//            callback('could not fetch data', undefined);
+//        }
+//    });
+
+    // request.open('GET', 'https://jsonplaceholder.typicode.com/todos/');//setting up the req
+   //request.open('GET', './todos.json');//fetching data from locally created json file
+
+   //getting data from multiple APIs
+//   request.open('GET', resource);
+//
+//    //send the request
+//    request.send();
+//};
+
+//console.log(1);
+//console.log(2);
+//specify a callback fun to state how to handle the data fetched
+//the callback function below is asynchronous. It will not block the code
+//getTodos((err, data)=>{
+//    console.log('callback fired');
+//    //console.log(err, data);
+//    if(err){
+//        console.log(err);
+//    }else{
+//        console.log(data);
+//    }
+//});
+//console.log(3);
+//console.log(4);
+//getTodos('./todos/luigi.json',(err, data)=>{
+//    console.log(data);
+//    getTodos('./todos/mario.json',(err, data)=>{
+//        console.log(data);
+//        getTodos('./todos/shaun.json',(err, data)=>{
+//            console.log(data);
+//        })
+//    })//will run one callback first, when done, it will run the next one
+    //this is called callback hell - nesting callback within callback within callback
+    //we can make this less bulky and prettier by using promises
+
+
+    
+    //console.log(err, data);
+    //if(err){
+    //    console.log(err);
+    //}else{
+    //    console.log(data);
+    //}
+//});
+//promise example
+//a promise is something that is going to take some time to do
+//it has two outcomes; success or rejection
+//const getSomething = () =>{
+//    return new Promise((resolve, reject) =>{
+//        //resolve & reject are functions built into the promise API in JS
+//        //fetch something
+//        resolve('some data');//called during a success//pass in the data as a parameter
+//        reject('some error');//called during an error
+//    });
+//};
+
+//getSomething()//when we get a promise we can tack on a .then() method
+//    .then((data)=>{//will be fired when the promise has been resolved
+//        //takes the data passed into the resolve func
+//        console.log(data);
+//    }, (err)=>{
+//        console.log(err);
+//    });//1st func in the then method fires if we resolve and the 2nd if we reject
+
+//simpler way of writing the then method
+//getSomething()
+//.then(data=>{
+//    console.log(data);
+//})
+//.catch(err =>{
+//    console.log(err);
+//})
+
+
+//cleaner and simplified code
+
+const getTodos = (resource)=>{
+    
+    //return a promise here
+    return new Promise((resolve, reject) =>{
+        //going to return a func that will do the network request
+        //create a request object
     const request = new XMLHttpRequest();
 
     request.addEventListener('readystatechange', () =>{
 
         if(request.readyState === 4 && request.status === 200){
-            callback(undefined, request.responseText);
-
+            const data = JSON.parse(request.responseText);//tales JSON string and converts it into JS objects to use easily in the code
+            resolve(data);
         }else if(request.readyState === 4){
-            callback('could not fetch data', undefined);
+            reject('error getting resource');
         }
     });
 
-    request.open('GET', 'https://jsonplaceholder.typicode.com/todos/');//setting up the req
+   //getting data from multiple APIs
+    request.open('GET', resource);
 
     //send the request
     request.send();
-};
 
-console.log(1);
-console.log(2);
-//specify a callback fun to state how to handle the data fetched
-//the callback function below is asynchronous. It will not block the code
-getTodos((err, data)=>{
-    console.log('callback fired');
-    //console.log(err, data);
-    if(err){
-        console.log(err);
-    }else{
-        console.log(data);
-    }
-});
-console.log(3);
-console.log(4);
+    })
+
+    
+};
+//getTodos('./todos/luigi.json').then(data => {
+//    console.log('promise resolved: ', data);
+//}).catch(err => {
+//    console.log('promise rejected: ', err);
+//});
+
+//chaining promises
+
+getTodos('./todos/luigi.json').then(data => {
+    console.log('promise 1 resolved: ', data);
+    return getTodos('./todos/mario.json')
+    }).then(data => {
+        console.log('promise 2 resolved: ', data);
+        return getTodos('./todos/shaun.json').then(data => {
+            console.log('promise 3 resolved: ', data);
+        })
+    }).catch(err => {//catches any error, so it doesn't have to be rewritten
+        console.log('promise rejected: ', err);
+    })
 
 

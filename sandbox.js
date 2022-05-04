@@ -1,38 +1,49 @@
 
-const getTodos = (callback)=>{
-    //create a request object
+const getTodos = (resource)=>{
+    
+    //return a promise here
+    return new Promise((resolve, reject) =>{
+        //going to return a func that will do the network request
+        //create a request object
     const request = new XMLHttpRequest();
 
     request.addEventListener('readystatechange', () =>{
 
         if(request.readyState === 4 && request.status === 200){
             const data = JSON.parse(request.responseText);//tales JSON string and converts it into JS objects to use easily in the code
-            callback(undefined, data);
+            resolve(data);
         }else if(request.readyState === 4){
-            callback('could not fetch data', undefined);
+            reject('error getting resource');
         }
     });
 
-   // request.open('GET', 'https://jsonplaceholder.typicode.com/todos/');//setting up the req
-   request.open('GET', './todos.json');//fetching data from locally created json file
+   //getting data from multiple APIs
+    request.open('GET', resource);
 
     //send the request
     request.send();
+
+    })
+
+    
 };
 
-console.log(1);
-console.log(2);
-//specify a callback fun to state how to handle the data fetched
-//the callback function below is asynchronous. It will not block the code
-getTodos((err, data)=>{
-    console.log('callback fired');
-    //console.log(err, data);
-    if(err){
-        console.log(err);
-    }else{
-        console.log(data);
-    }
-});
-console.log(3);
-console.log(4);
+//getTodos('./todos/luigi.json').then(data => {
+//    console.log('promise resolved: ', data);
+//}).catch(err => {
+//    console.log('promise rejected: ', err);
+//});
 
+//chaining promises
+
+getTodos('./todos/luigi.json').then(data => {
+    console.log('promise 1 resolved: ', data);
+    return getTodos('./todos/mario.json')
+    }).then(data => {
+        console.log('promise 2 resolved: ', data);
+        return getTodos('./todos/shaun.json').then(data => {
+            console.log('promise 3 resolved: ', data);
+        })
+    }).catch(err => {//catches any error, so it doesn't have to be rewritten
+        console.log('promise rejected: ', err);
+    })
