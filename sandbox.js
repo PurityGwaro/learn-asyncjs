@@ -1,49 +1,15 @@
-
-const getTodos = (resource)=>{
-    
-    //return a promise here
-    return new Promise((resolve, reject) =>{
-        //going to return a func that will do the network request
-        //create a request object
-    const request = new XMLHttpRequest();
-
-    request.addEventListener('readystatechange', () =>{
-
-        if(request.readyState === 4 && request.status === 200){
-            const data = JSON.parse(request.responseText);//tales JSON string and converts it into JS objects to use easily in the code
-            resolve(data);
-        }else if(request.readyState === 4){
-            reject('error getting resource');
-        }
+//using fetch api to make http requests
+//it is built into JS
+//the fetch() method returns to us a promise so we can tack on the then method to it
+fetch('./todos/luigi.json').then(response => {
+    console.log('resolved: ', response);
+    //response.json() returns a promise
+    response.json().then(data => {
+        console.log(data);
     });
-
-   //getting data from multiple APIs
-    request.open('GET', resource);
-
-    //send the request
-    request.send();
-
-    })
-
-    
-};
-
-//getTodos('./todos/luigi.json').then(data => {
-//    console.log('promise resolved: ', data);
-//}).catch(err => {
-//    console.log('promise rejected: ', err);
-//});
-
-//chaining promises
-
-getTodos('./todos/luigi.json').then(data => {
-    console.log('promise 1 resolved: ', data);
-    return getTodos('./todos/mario.json')
-    }).then(data => {
-        console.log('promise 2 resolved: ', data);
-        return getTodos('./todos/shaun.json').then(data => {
-            console.log('promise 3 resolved: ', data);
-        })
-    }).catch(err => {//catches any error, so it doesn't have to be rewritten
-        console.log('promise rejected: ', err);
-    })
+}).catch(err => {
+    console.log('rejected: ', err);
+});
+//in the fetch api, a promise is only ever rejected when we have some kind of network error
+//if the directory is mistyped/not spelled well, it is not rejected;instead it is still resolved and we get the response;the reponse gives a status of 404
+//we could check for the status of the fetch, to make sure it is 200 before we do something with the data
