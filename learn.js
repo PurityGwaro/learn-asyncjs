@@ -212,9 +212,9 @@ getTodos('./todos/luigi.json').then(data => {
 fetch('./todos/luigi.json').then(response => {
     console.log('resolved: ', response);
     //response.json() returns a promise
-    response.json().then(data => {
-        console.log(data);
-    });
+    return response.json();
+}).then(data => {
+    console.log(data);
 }).catch(err => {
     console.log('rejected: ', err);
 });
