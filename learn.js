@@ -221,3 +221,24 @@ fetch('./todos/luigi.json').then(response => {
 //in the fetch api, a promise is only ever rejected when we have some kind of network error
 //if the directory is mistyped/not spelled well, it is not rejected;instead it is still resolved and we get the response;the reponse gives a status of 404
 //we could check for the status of the fetch, to make sure it is 200 before we do something with the data
+
+//Async and await
+//new to JS and were created to help us in chaining promises and helps it be in a calean and readable way
+
+//func to store all of the asynchronous code 
+const getTodo = async() => {//async keyword makes it an asynchronous function. It will return a promise every time it is called
+    //fetch data using the fetch api
+    //fetch('./todos/luigi.json').then((response) => {}) - this is how we wld write the fetch api,.. but when using await, here is how it is written:
+    const response = await fetch('./todos/luigi.json');
+    //await stops Js from assigning a value to the variable until the promise has resolved
+    //console.log(response);
+    //use the json mathod to get the data. It is asynchronous,so we use the await here todo
+    const data = await response.json();
+    //console.log(data);
+    return data;
+     
+};
+//const test = getTodos();//test is = to the call of the async function which is a promise
+//console.log(test);//test is now a promise
+
+getTodo();
